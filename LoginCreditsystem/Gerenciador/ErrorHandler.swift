@@ -3,7 +3,7 @@
 //  LoginCreditsystem
 //
 //  Created by luiz on 20/04/23.
-//
+// Criado para gerenciar erros simples de request
 
 import Foundation
 
