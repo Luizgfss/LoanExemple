@@ -1,30 +1,29 @@
 import SwiftUI
 import Firebase
 
-struct LoanRequest {
-let userId: String
-let amount: Double
-let duration: Int
+
+struct LoanRequest: Codable {
+   
+    let userId: String
+    let amount: Double
+    let duration: Int
 }
 
-struct PedidoEmprestimoView: View {
+struct LoanRequestView: View {
     @State private var loanAmount = ""
     @State private var loanDuration = ""
     @State private var errorMessage = ""
     @State private var isRequestSent = false
+    
     var body: some View {
         VStack {
             Text("Solicitação de empréstimo")
                 .font(.title)
                 .padding()
             
-            TextField("Valor desejado", text: $loanAmount)
-                .keyboardType(.decimalPad)
-                .padding()
+            AmountInputView(loanAmount: $loanAmount)
             
-            TextField("Prazo de pagamento (meses)", text: $loanDuration)
-                .keyboardType(.numberPad)
-                .padding()
+            DurationInputView(loanDuration: $loanDuration)
             
             Text(errorMessage)
                 .foregroundColor(.red)
@@ -39,10 +38,10 @@ struct PedidoEmprestimoView: View {
                 }
                 
                 let loanRequest = LoanRequest(userId: userId, amount: amount, duration: duration)
-                let manager = LoanRequestManager()
+                let loanRequestManager = LoanRequestManager()
                 let managerRequest = LoanRequestManager.LoanRequest(userId: loanRequest.userId, amount: loanRequest.amount, duration: loanRequest.duration)
                 
-                manager.createLoanRequest(request: managerRequest) { error in
+                loanRequestManager.createLoanRequest(request: managerRequest) { error in
                     if let error = error {
                         print(error.localizedDescription)
                     } else {
@@ -66,8 +65,43 @@ struct PedidoEmprestimoView: View {
     }
 }
 
+struct AmountInputView: View {
+    @Binding var loanAmount: String
+    
+    var body: some View {
+        VStack {
+            Text("Valor desejado")
+                .padding()
+            
+            TextField("0.00", text: $loanAmount)
+                .keyboardType(.decimalPad)
+                .padding()
+        }
+        .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.blue, lineWidth: 1))
+        .padding()
+    }
+}
+
+struct DurationInputView: View {
+    @Binding var loanDuration: String
+    
+    var body: some View {
+        VStack {
+            Text("Prazo de pagamento (meses)")
+                .padding()
+            
+            TextField("0", text: $loanDuration)
+                .keyboardType(.numberPad)
+                .padding()
+        }
+        .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.blue, lineWidth: 1))
+        .padding()
+    }
+}
+
 struct DesignButton: ButtonStyle {
     let color: Color
+    
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .padding()
@@ -77,21 +111,14 @@ struct DesignButton: ButtonStyle {
     }
 }
 
-struct PedidoEmprestimo: View {
-var body: some View {
-// Your implementation here
-EmptyView()
-}
-}
-
 class PedidoEmprestimoManager {
-    struct PedidoEmprestimo {
+    struct LoanRequest {
         let userId: String
         let amount: Double
         let duration: Int
     }
     
-    func createPedidoEmprestimo(request: PedidoEmprestimo, completion: @escaping (Error?) -> Void) {
-        // Your implementation here
+    func createLoanRequest(request: LoanRequest, completion: @escaping (Error?) -> Void) {
+        // Implementation of createLoanRequest
     }
 }
